@@ -1,0 +1,33 @@
+
+name: Daily GitHub Contributions
+
+on:
+  schedule:
+    # Run every day at 9 AM UTC
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  daily-contributions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          repository: divyanshu2557/daily-contributions
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set up Git config
+        run: |
+          git config user.name "divyanshu2557"
+          git config user.email "divyanshu2557@example.com"
+
+      - name: Add daily contribution
+        run: |
+          echo "Contribution: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> contributions.txt
+          git add contributions.txt
+          git commit -m "Daily contribution: $(date -u '+%Y-%m-%d')"
+
+      - name: Push daily contribution
+        run: git push origin main
